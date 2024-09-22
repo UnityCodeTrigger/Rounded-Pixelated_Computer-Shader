@@ -1,0 +1,53 @@
+#pragma kernel CSDrawCircles
+
+RWTexture2D<float4> Result;
+Texture2D<float4> Source;
+uint pixelSize;
+
+[numthreads(8, 8, 1)]
+void CSDrawCircles(uint3 id : SV_DispatchThreadID)
+{
+    // Modificar al gusto
+    float radiusFactor = 1.8;
+    float smoothFactor = .8;
+    
+    uint2 pixelCoord = uint2(id.xy);
+    uint2 blockCoord = (pixelCoord / pixelSize) * pixelSize;
+    
+    float2 blockCenter = float2(blockCoord) + float2(pixelSize, pixelSize) * 0.5;
+    float distance = length(float2(pixelCoord) - blockCenter);
+    
+    bool isTopSameColor = (Result[pixelCoord] == Result[float2(pixelCoord.x, pixelCoord.y + pixelSize)]);
+    bool isBottomSameColor = (Result[pixelCoord] == Result[float2(pixelCoord.x, pixelCoord.y - pixelSize)]);
+    bool isRightSameColor = (Result[pixelCoord] == Result[float2(pixelCoord.x + pixelSize, pixelCoord.y)]);
+    bool isLeftSameColor = (Result[pixelCoord] == Result[float2(pixelCoord.x - pixelSize, pixelCoord.y)]);
+    
+    
+    // Top-Right
+    bool isTopRight = (pixelCoord.x > blockCenter.x) && (pixelCoord.y > blockCenter.y);
+    if (isTopRight && !isTopSameColor && !isRightSameColor && distance > (pixelSize / radiusFactor))
+    {
+        Result[pixelCoord] = Result[pixelCoord + float2((pixelSize * smoothFactor), 0)];
+    }
+    
+    // Top-Left
+    bool isTopleft = (pixelCoord.x < blockCenter.x) && (pixelCoord.y > blockCenter.y);
+    if (isTopleft && !isTopSameColor && !isLeftSameColor && distance > (pixelSize / radiusFactor))
+    {
+        Result[pixelCoord] = Result[pixelCoord + float2(-(pixelSize * smoothFactor), 0)];
+    }
+    
+    // Bottom-Right
+    bool isBottomRight = (pixelCoord.x > blockCenter.x) && (pixelCoord.y < blockCenter.y);
+    if (isBottomRight && !isTopSameColor && !isLeftSameColor && distance > (pixelSize / radiusFactor))
+    {
+        Result[pixelCoord] = Result[pixelCoord + float2(0, (pixelSize * smoothFactor))];
+    }
+    
+    // Bottom-Left
+    bool isBottomLeft = (pixelCoord.x < blockCenter.x) && (pixelCoord.y < blockCenter.y);
+    if (isBottomLeft && !isBottomSameColor && !isLeftSameColor && distance > (pixelSize / radiusFactor))
+    {
+        Result[pixelCoord] = Result[pixelCoord + float2(0, -(pixelSize * smoothFactor))];
+    }   
+}

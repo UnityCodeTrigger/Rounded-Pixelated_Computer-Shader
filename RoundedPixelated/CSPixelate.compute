@@ -1,0 +1,16 @@
+#pragma kernel CSPixelate
+
+Texture2D<float4> Source;
+RWTexture2D<float4> Result;
+uint pixelSize;
+
+[numthreads(8, 8, 1)]
+void CSPixelate(uint3 id : SV_DispatchThreadID)
+{
+    uint2 pixelCoord = uint2(id.xy);
+    uint2 blockCoord = (pixelCoord / pixelSize) * pixelSize;
+
+    float4 blockColor = Source[blockCoord];
+
+    Result[pixelCoord] = blockColor;
+}
