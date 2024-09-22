@@ -2,7 +2,7 @@
 
 Este proyecto implementa un shader personalizado en Unity que combina efectos de pixelado y dibujo de círculos. Utiliza compute shaders para procesar imágenes de manera eficiente y ofrecer una apariencia estilizada en juegos o aplicaciones gráficas.
 
-<iframe width="560" height="315" src="https://www.youtube.com/embed/TLqigsvK2C0?si=OoNkR8czAsQn0FrG" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+[Example Video YouTube](https://www.youtube.com/watch?v=TLqigsvK2C0)
 
 ## Características
 
